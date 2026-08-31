@@ -1,0 +1,31 @@
+# Unreal Engine generated files
+/Binaries/
+/DerivedDataCache/
+/Intermediate/
+/Saved/
+
+# Code-only repository: do not version Unreal content/assets.
+/Content/
+*.uasset
+*.umap
+
+# IDE and generated project files
+/.idea/
+/.vs/
+/.vscode/
+*.sln
+*.slnx
+*.csproj
+*.vcxproj
+*.vcxproj.filters
+*.VC.db
+*.VC.opendb
+
+# Build and editor user files
+*.opensdf
+*.sdf
+*.suo
+*.user
+*.userprefs
+*.log
+*.tmp
