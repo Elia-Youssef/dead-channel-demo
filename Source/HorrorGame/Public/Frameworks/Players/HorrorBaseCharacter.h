@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "HorrorInterfaceInteract.h"
+#include "Frameworks/Interfaces/HorrorInterfaceInteract.h"
 #include "GameFramework/Character.h"
 #include "HorrorBaseCharacter.generated.h"
 
 
+class UPlayerCamComponent;
 class UTraceComponent;
 // Forward Declarations
 class UCameraComponent;
@@ -47,8 +48,7 @@ public:
 	//
 	UFUNCTION()
 	void FireInteraction();
-
-
+	
 	UPROPERTY()
 	bool bIsRunning = false;
 
@@ -96,6 +96,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	TObjectPtr<UTraceComponent> TraceComp = nullptr;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Components")
+	TObjectPtr<UPlayerCamComponent> PlayerCamComp = nullptr;
 
 	// Movement Variables
 

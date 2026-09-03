@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Frameworks/HorrorInterfaceInteract.h"
+#include "Frameworks/Interfaces/HorrorInterfaceInteract.h"
 #include "GameFramework/Actor.h"
 #include "Utils/Utils.h"
 #include "BaseLightActor.generated.h"

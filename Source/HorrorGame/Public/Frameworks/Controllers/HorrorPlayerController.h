@@ -3,26 +3,24 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "HorrorInterfaceInteract.h"
+#include "frameworks/Interfaces/HorrorInterfaceInteract.h"
 #include "GameFramework/PlayerController.h"
 #include "HorrorPlayerController.generated.h"
 
-
+// Forward Declarations
 struct FInputActionValue;
 class UInputAction;
 class UInputMappingContext;
 class UFlashLightComponent;
 
+// Fade Enum Class
 UENUM()
 enum class EFadeType : uint8
 {
-	FadeBlack,
-	FadeClear,
-	FadeIn,
-	FadeOut
+	FadeBlack, FadeClear, FadeIn, FadeOut
 };
 
-
+// Main Class
 UCLASS()
 class HORRORGAME_API AHorrorPlayerController : public APlayerController, public IHorrorInterfaceInteract
 {
@@ -44,16 +42,19 @@ protected:
 private:
 	// Private Components
 	UPROPERTY(EditDefaultsOnly, Category = "HUD")
-	TSubclassOf<class UHudWidget> HudWidgetClass = nullptr;
+	TSubclassOf<class UHudManagerWidget> HudWidgetClass = nullptr;
 
 	UPROPERTY()
-	TObjectPtr<UHudWidget> HudWidgetComp = nullptr;
+	TObjectPtr<UHudManagerWidget> HudWidgetComp = nullptr;
 
 	UPROPERTY()
 	TObjectPtr<UFlashLightComponent> BoundFlashLightComp = nullptr;
 
 
-	// Enhanced Input Actions
+	// Enhanced Input Sections
+#pragma region Enhanced Input
+
+	// Enhanced Input Actions 
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputMappingContext> IMC_HorrorGame = nullptr;
@@ -69,10 +70,10 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputAction> IA_Look = nullptr;
-	
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputAction> IA_Focus = nullptr;
-	
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputAction> IA_Crouch = nullptr;
 
@@ -94,6 +95,12 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputAction> IA_Drone = nullptr;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> IA_PlayerCam = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> IA_PlayerCamZoom = nullptr;
+
 	// Enhanced Input Functions
 
 	UFUNCTION()
@@ -101,10 +108,10 @@ private:
 
 	UFUNCTION()
 	void Look_Action(const FInputActionValue& Value);
-	
+
 	UFUNCTION()
 	void Focus_Start_Action();
-	
+
 	UFUNCTION()
 	void Focus_Stop_Action();
 
@@ -148,4 +155,15 @@ private:
 
 	UFUNCTION()
 	void HandleFlashLightStateChanged(bool bIsOn);
+
+	UFUNCTION()
+	void StartPlayerCamera();
+
+	UFUNCTION()
+	void StopPlayerCamera();
+
+	UFUNCTION()
+	void PlayerCamZoom();
+
+#pragma endregion
 };

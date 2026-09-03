@@ -1,19 +1,20 @@
 // Project By Rebel Art Studios.
 
 
-#include "UMG/HUDWidget.h"
+#include "UMG/HudPlayerMain.h"
+
 #include "Animation/WidgetAnimation.h"
-#include "UMG/HudFlashLight.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "UMG/HudFlashLight.h"
 
-void UHudWidget::NativeConstruct()
+void UHudPlayerMain::NativeConstruct()
 {
 	Super::NativeConstruct();
 
 	if (IsValid(RestartText) && IsValid(QuitText) && IsValid(LPText1Text) && IsValid(LPText2Text)
 		&& IsValid(LPText3Text) && IsValid(LPText4Text) && IsValid(LPText5Text)
-		&& IsValid(LPText6Text) && IsValid(LPText7Text))
+		&& IsValid(LPText6Text) && IsValid(LPText7Text) && IsValid(LPText8Text))
 	{
 		TextBlocks.Empty();
 		TextBlocks.AddUnique(RestartText);
@@ -25,36 +26,31 @@ void UHudWidget::NativeConstruct()
 		TextBlocks.AddUnique(LPText5Text);
 		TextBlocks.AddUnique(LPText6Text);
 		TextBlocks.AddUnique(LPText7Text);
+		TextBlocks.AddUnique(LPText8Text);
 	}
 
 	ToggleCrosshair(false);
-	ToggleInteractionText(false, FText::FromString(""));
-
+	ToggleInteractionText(false, FText::GetEmpty());
 	InitialTextColors();
-
-	// The Widget Is Hidden At Begin Play
-	// SetRenderOpacity(0.f);
 }
 
-void UHudWidget::NativePreConstruct()
+void UHudPlayerMain::NativePreConstruct()
 {
 	Super::NativePreConstruct();
-
-	// Hud FlashLight Spawn 
 }
 
-void UHudWidget::InitialTextColors()
+void UHudPlayerMain::InitialTextColors()
 {
-	if (!TextBlocks.IsEmpty())
+	for (UTextBlock* TextBlock : TextBlocks)
 	{
-		for (UTextBlock* TextBlock : TextBlocks)
+		if (IsValid(TextBlock))
 		{
 			TextBlock->SetColorAndOpacity(StartColor);
 		}
 	}
 }
 
-UTextBlock* UHudWidget::GetActionText(EHudActions Action) const
+UTextBlock* UHudPlayerMain::GetActionText(EHudActions Action) const
 {
 	switch (Action)
 	{
@@ -70,49 +66,49 @@ UTextBlock* UHudWidget::GetActionText(EHudActions Action) const
 		return LPText3Text.Get();
 	case EHudActions::ChangeView:
 		return LPText4Text.Get();
-	case EHudActions::Flashlight:
+	case EHudActions::PlayerCamView:
 		return LPText5Text.Get();
-	case EHudActions::Interact:
+	case EHudActions::Flashlight:
 		return LPText6Text.Get();
-	case EHudActions::Drone:
+	case EHudActions::Interact:
 		return LPText7Text.Get();
+	case EHudActions::Drone:
+		return LPText8Text.Get();
 	default:
 		return nullptr;
 	}
 }
 
-void UHudWidget::ToggleCrosshair(const bool bEnable)
+void UHudPlayerMain::ToggleCrosshair(bool bEnable)
 {
-	if (!IsValid(CrosshairImage)) return;
-
-	CrosshairImage->SetVisibility(bEnable ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+	if (IsValid(CrosshairImage))
+	{
+		CrosshairImage->SetVisibility(bEnable ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+	}
 }
 
-void UHudWidget::ToggleInteractionText(const bool bEnable, const FText NewText)
+void UHudPlayerMain::ToggleInteractionText(bool bEnable, FText NewText)
 {
-	if (!IsValid(InteractionText)) return;
-
-	InteractionText->SetText(bEnable ? NewText : FText::FromString(""));
-	InteractionText->SetVisibility(bEnable ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+	if (IsValid(InteractionText))
+	{
+		InteractionText->SetText(bEnable ? NewText : FText::GetEmpty());
+		InteractionText->SetVisibility(bEnable ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+	}
 }
 
-void UHudWidget::SwitchColor(EHudActions Action, bool bOn)
+void UHudPlayerMain::SwitchColor(EHudActions Action, bool bOn)
 {
-	if (UTextBlock* TargetText = GetActionText(Action); IsValid(TargetText))
+	if (UTextBlock* TargetText = GetActionText(Action))
 	{
 		TargetText->SetColorAndOpacity(bOn ? EndColor : StartColor);
 	}
 }
 
-void UHudWidget::ToggleHudWidget(bool bEnable)
+void UHudPlayerMain::ToggleHudWidget(bool bEnable)
 {
-	if (!IsValid(CrosshairAnimation)) return;
-
-	PlayAnimation(CrosshairAnimation, 0.f, 1,
-	              bEnable ? EUMGSequencePlayMode::Forward : EUMGSequencePlayMode::Reverse);
 }
 
-void UHudWidget::UpdateFlashlightBattery(float CurrentBattery, float MaxBattery)
+void UHudPlayerMain::UpdateFlashlightBattery(float CurrentBattery, float MaxBattery)
 {
 	const float BatteryPercent = MaxBattery > KINDA_SMALL_NUMBER
 		                             ? FMath::Clamp(CurrentBattery / MaxBattery, 0.f, 1.f) * 100.f
@@ -124,7 +120,7 @@ void UHudWidget::UpdateFlashlightBattery(float CurrentBattery, float MaxBattery)
 	}
 }
 
-void UHudWidget::UpdateFlashlightState(bool bIsOn)
+void UHudPlayerMain::UpdateFlashlightState(bool bIsOn)
 {
 	if (IsValid(HudFlashLightComp))
 	{

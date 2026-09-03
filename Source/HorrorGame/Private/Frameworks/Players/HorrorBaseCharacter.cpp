@@ -1,16 +1,17 @@
 // Project By Rebel Art Studios.
 
-#include "HorrorGame/Public/Frameworks/HorrorBaseCharacter.h"
+#include "HorrorGame/Public/Frameworks/Players/HorrorBaseCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SpotLightComponent.h"
 #include "Engine/World.h"
-#include "Frameworks/FlashLightComponent.h"
-#include "Frameworks/HorrorPlayerController.h"
+#include "Frameworks/Players/FlashLightComponent.h"
+#include "Frameworks/Controllers/HorrorPlayerController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "TimerManager.h"
-#include "Frameworks/TraceComponent.h"
+#include "Frameworks/Players/PlayerCamComponent.h"
+#include "Frameworks/Players/TraceComponent.h"
 
 
 AHorrorBaseCharacter::AHorrorBaseCharacter()
@@ -48,6 +49,7 @@ AHorrorBaseCharacter::AHorrorBaseCharacter()
 
 	FlashLightComp = CreateDefaultSubobject<UFlashLightComponent>(TEXT("FlashLight"));
 	TraceComp = CreateDefaultSubobject<UTraceComponent>(TEXT("TraceComponent"));
+	PlayerCamComp = CreateDefaultSubobject<UPlayerCamComponent>(TEXT("PlayerCamComp"));
 }
 
 void AHorrorBaseCharacter::BeginPlay()

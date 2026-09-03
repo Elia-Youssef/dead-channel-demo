@@ -1,15 +1,15 @@
 // Project By Rebel Art Studios.
 
 
-#include "HorrorGame/Public/Frameworks/HorrorPlayerController.h"
-
+#include "Frameworks/Controllers/HorrorPlayerController.h"
 #include "Actors/BaseSecCam.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "Frameworks/HorrorBaseCharacter.h"
-#include "Frameworks/FlashLightComponent.h"
+#include "Frameworks/Players/HorrorBaseCharacter.h"
+#include "Frameworks/Players/FlashLightComponent.h"
 #include "GameFramework/Character.h"
-#include "UMG/HudWidget.h"
+#include "UMG/HudManagerWidget.h"
+#include "UMG/HudPlayerMain.h"
 #include "Camera/PlayerCameraManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -24,7 +24,7 @@ void AHorrorPlayerController::BeginPlay()
 
 	if (IsValid(HudWidgetClass) && !IsValid(HudWidgetComp))
 	{
-		HudWidgetComp = CreateWidget<UHudWidget>(this, HudWidgetClass);
+		HudWidgetComp = CreateWidget<UHudManagerWidget>(this, HudWidgetClass);
 		HudWidgetComp->AddToViewport();
 	}
 
@@ -47,16 +47,20 @@ void AHorrorPlayerController::BindFlashLightComponent()
 	{
 		if (IsValid(BoundFlashLightComp))
 		{
-			BoundFlashLightComp->OnBatteryChanged.RemoveDynamic(this, &AHorrorPlayerController::HandleFlashLightBatteryChanged);
-			BoundFlashLightComp->OnFlashLightStateChanged.RemoveDynamic(this, &AHorrorPlayerController::HandleFlashLightStateChanged);
+			BoundFlashLightComp->OnBatteryChanged.RemoveDynamic(
+				this, &AHorrorPlayerController::HandleFlashLightBatteryChanged);
+			BoundFlashLightComp->OnFlashLightStateChanged.RemoveDynamic(
+				this, &AHorrorPlayerController::HandleFlashLightStateChanged);
 		}
 
 		BoundFlashLightComp = NewFlashLightComp;
 
 		if (IsValid(BoundFlashLightComp))
 		{
-			BoundFlashLightComp->OnBatteryChanged.AddDynamic(this, &AHorrorPlayerController::HandleFlashLightBatteryChanged);
-			BoundFlashLightComp->OnFlashLightStateChanged.AddDynamic(this, &AHorrorPlayerController::HandleFlashLightStateChanged);
+			BoundFlashLightComp->OnBatteryChanged.AddDynamic(
+				this, &AHorrorPlayerController::HandleFlashLightBatteryChanged);
+			BoundFlashLightComp->OnFlashLightStateChanged.AddDynamic(
+				this, &AHorrorPlayerController::HandleFlashLightStateChanged);
 		}
 	}
 
@@ -69,19 +73,20 @@ void AHorrorPlayerController::BindFlashLightComponent()
 
 void AHorrorPlayerController::HandleFlashLightBatteryChanged(float CurrentBattery, float MaxBattery)
 {
-	if (IsValid(HudWidgetComp))
+	if (UHudPlayerMain* PlayerMainHud = HudWidgetComp ? HudWidgetComp->GetPlayerMainHud() : nullptr)
 	{
-		HudWidgetComp->UpdateFlashlightBattery(CurrentBattery, MaxBattery);
+		PlayerMainHud->UpdateFlashlightBattery(CurrentBattery, MaxBattery);
 	}
 }
 
 void AHorrorPlayerController::HandleFlashLightStateChanged(bool bIsOn)
 {
-	if (IsValid(HudWidgetComp))
+	if (UHudPlayerMain* PlayerMainHud = HudWidgetComp ? HudWidgetComp->GetPlayerMainHud() : nullptr)
 	{
-		HudWidgetComp->UpdateFlashlightState(bIsOn);
+		PlayerMainHud->UpdateFlashlightState(bIsOn);
 	}
 }
+
 
 void AHorrorPlayerController::SetupInputComponent()
 {
@@ -95,9 +100,11 @@ void AHorrorPlayerController::SetupInputComponent()
 
 	if (UEnhancedInputComponent* EIC = Cast<UEnhancedInputComponent>(InputComponent))
 	{
+		// Main Game Controls
 		EIC->BindAction(IA_Restart, ETriggerEvent::Started, this, &AHorrorPlayerController::Restart_Action);
 		EIC->BindAction(IA_Quit, ETriggerEvent::Started, this, &AHorrorPlayerController::Quit_Action);
 
+		// Player Movement Controls
 		EIC->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AHorrorPlayerController::Move_Action);
 		EIC->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AHorrorPlayerController::Look_Action);
 
@@ -122,6 +129,12 @@ void AHorrorPlayerController::SetupInputComponent()
 		EIC->BindAction(IA_Interact, ETriggerEvent::Started, this, &AHorrorPlayerController::ChangeView_Action);
 
 		EIC->BindAction(IA_Drone, ETriggerEvent::Started, this, &AHorrorPlayerController::Drone_Action);
+
+		// Player Camera Controls
+		EIC->BindAction(IA_PlayerCam, ETriggerEvent::Started, this, &AHorrorPlayerController::StartPlayerCamera);
+		EIC->BindAction(IA_PlayerCam, ETriggerEvent::Completed, this, &AHorrorPlayerController::StopPlayerCamera);
+		EIC->BindAction(IA_PlayerCam, ETriggerEvent::Canceled, this, &AHorrorPlayerController::StopPlayerCamera);
+		EIC->BindAction(IA_PlayerCam, ETriggerEvent::Completed, this, &AHorrorPlayerController::StopPlayerCamera);
 	}
 }
 
@@ -150,7 +163,6 @@ void AHorrorPlayerController::CameraFadeControl(EFadeType FadeType)
 	default: break;
 	}
 }
-
 
 void AHorrorPlayerController::Move_Action(const FInputActionValue& Value)
 {
@@ -183,7 +195,10 @@ void AHorrorPlayerController::Focus_Start_Action()
 		return;
 	}
 
-	if (HudWidgetComp) HudWidgetComp->ToggleCrosshair(true);
+	if (UHudPlayerMain* PlayerMainHud = HudWidgetComp ? HudWidgetComp->GetPlayerMainHud() : nullptr)
+	{
+		PlayerMainHud->ToggleCrosshair(true);
+	}
 
 	if (AHorrorBaseCharacter* MyChar = Cast<AHorrorBaseCharacter>(GetPawn()))
 	{
@@ -199,7 +214,10 @@ void AHorrorPlayerController::Focus_Stop_Action()
 		return;
 	}
 
-	if (HudWidgetComp) HudWidgetComp->ToggleCrosshair(false);
+	if (UHudPlayerMain* PlayerMainHud = HudWidgetComp ? HudWidgetComp->GetPlayerMainHud() : nullptr)
+	{
+		PlayerMainHud->ToggleCrosshair(false);
+	}
 
 	if (AHorrorBaseCharacter* MyChar = Cast<AHorrorBaseCharacter>(GetPawn()))
 	{
@@ -288,5 +306,18 @@ void AHorrorPlayerController::ChangeView_Action()
 }
 
 void AHorrorPlayerController::Drone_Action()
+{
+}
+
+void AHorrorPlayerController::StartPlayerCamera()
+{
+	
+}
+
+void AHorrorPlayerController::StopPlayerCamera()
+{
+}
+
+void AHorrorPlayerController::PlayerCamZoom()
 {
 }

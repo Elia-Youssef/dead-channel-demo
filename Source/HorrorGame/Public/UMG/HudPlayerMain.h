@@ -4,42 +4,34 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "HudWidget.generated.h"
+#include "HudPlayerMain.generated.h"
 
-// Forward Declarations
-
-class UMyClass;
 class UHudFlashLight;
-class UTextBlock;
 class UImage;
+class UTextBlock;
 class UWidgetAnimation;
-
-// Enum Class
 
 UENUM()
 enum class EHudActions : uint8
 {
-	Move, Restart, Quit, Sprint, Jump, ChangeView, Flashlight, Interact, Drone
+	Move, Restart, Quit, Sprint, Jump, ChangeView, PlayerCamView, Flashlight, Interact, Drone
 };
 
-// Main Class
-
 UCLASS()
-class HORRORGAME_API UHudWidget : public UUserWidget
+class HORRORGAME_API UHudPlayerMain : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
-	// Public Events
 	UFUNCTION()
-	void ToggleCrosshair(const bool bEnable);
-	
+	void ToggleCrosshair(bool bEnable);
+
 	UFUNCTION()
-	void ToggleInteractionText(const bool bEnable, const FText NewText);
+	void ToggleInteractionText(bool bEnable, FText NewText);
 
 	UFUNCTION()
 	void SwitchColor(EHudActions Action, bool bOn);
-	
+
 	UFUNCTION()
 	void ToggleHudWidget(bool bEnable);
 
@@ -49,35 +41,23 @@ public:
 	UFUNCTION()
 	void UpdateFlashlightState(bool bIsOn);
 
-
 protected:
-	// Native Events
 	virtual void NativeConstruct() override;
 	virtual void NativePreConstruct() override;
 
-	//
 	void InitialTextColors();
 
 private:
-	// Helper Function
 	UTextBlock* GetActionText(EHudActions Action) const;
 
-	//// Private Components
-	///
-	// Child Components
-	
-	UPROPERTY(meta=(BindWidget))
-	TObjectPtr<UHudFlashLight> HudFlashLightComp;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UHudFlashLight> HudFlashLightComp = nullptr;
 
-	// Crosshair
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	TObjectPtr<UImage> CrosshairImage = nullptr;
-	
-	// Interaction
+
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	TObjectPtr<UTextBlock> InteractionText = nullptr;
-
-	// Upper Panel
 
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	TObjectPtr<UTextBlock> GeneralText = nullptr;
@@ -87,8 +67,6 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	TObjectPtr<UTextBlock> QuitText = nullptr;
-
-	// Lower Panel
 
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	TObjectPtr<UTextBlock> PanelText = nullptr;
@@ -114,17 +92,15 @@ private:
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	TObjectPtr<UTextBlock> LPText7Text = nullptr;
 	
-	// Animation
-	UPROPERTY(Transient, meta = (BindWidgetAnim))
-	TObjectPtr<UWidgetAnimation> CrosshairAnimation = nullptr;
+	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
+	TObjectPtr<UTextBlock> LPText8Text = nullptr;
 
-	// Internal Array
 	UPROPERTY(EditDefaultsOnly)
 	FSlateColor StartColor = FLinearColor(0.85f, 0.85f, 0.85f, 1.f);
 
 	UPROPERTY(EditDefaultsOnly)
 	FSlateColor EndColor = FLinearColor(0.8f, 0.f, 0.f, 1.f);
-	
+
 	UPROPERTY()
 	TArray<TObjectPtr<UTextBlock>> TextBlocks;
 };

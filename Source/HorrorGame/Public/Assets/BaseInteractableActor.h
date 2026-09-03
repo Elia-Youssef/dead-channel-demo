@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Frameworks/HorrorInterfaceInteract.h"
+#include "Frameworks/Interfaces/HorrorInterfaceInteract.h"
 #include "BaseInteractableActor.generated.h"
 
 class UArrowComponent;

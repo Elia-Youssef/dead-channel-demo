@@ -1,7 +1,7 @@
 // Project By Rebel Art Studios.
 
 
-#include "Frameworks/FlashLightComponent.h"
+#include "Frameworks/Players/FlashLightComponent.h"
 
 #include "Components/SpotLightComponent.h"
 #include "Engine/World.h"

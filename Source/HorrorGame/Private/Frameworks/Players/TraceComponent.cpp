@@ -1,6 +1,6 @@
 // Project By Rebel Art Studios.
 
-#include "Frameworks/TraceComponent.h"
+#include "Frameworks/Players/TraceComponent.h"
 
 #include "Components/SceneComponent.h"
 #include "DrawDebugHelpers.h"
