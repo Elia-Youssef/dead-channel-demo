@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Frameworks/Interfaces/HorrorInterfaceInteract.h"
 #include "GameFramework/Actor.h"
-#include "Utils/Utils.h"
+#include "Data/Utils.h"
 #include "BaseLightActor.generated.h"
 
 class ULocalLightComponent;

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BaseInteractableActor.h"
-#include "Utils/Utils.h"
+#include "Data/Utils.h"
 #include "ButtonActor.generated.h"
 
 class UButtonWidget;

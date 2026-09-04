@@ -3,8 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
 #include "Utils.generated.h"
+
+// Fade Enum Class
+UENUM()
+enum class EFadeType : uint8
+{
+	FadeBlack, FadeClear, FadeIn, FadeOut
+};
+
 
 USTRUCT()
 struct FEmissiveProperties

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Data/Utils.h"
 #include "frameworks/Interfaces/HorrorInterfaceInteract.h"
 #include "GameFramework/PlayerController.h"
 #include "HorrorPlayerController.generated.h"
@@ -13,12 +14,6 @@ class UInputAction;
 class UInputMappingContext;
 class UFlashLightComponent;
 
-// Fade Enum Class
-UENUM()
-enum class EFadeType : uint8
-{
-	FadeBlack, FadeClear, FadeIn, FadeOut
-};
 
 // Main Class
 UCLASS()
